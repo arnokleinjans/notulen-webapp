@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notulen Web App | AID</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Sidebar met instellingen -->
+    <aside>
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a10 10 0 1 0 10 10H12V2z"></path>
+                <path d="M12 12L2.69 7"></path>
+                <path d="M12 12l5.63 8.16"></path>
+            </svg>
+            AID Notulen
+        </div>
+
+        <div class="sidebar-section">
+            <h3>🔑 Configuratie</h3>
+            <div class="input-group">
+                <label for="assemblyKey">AssemblyAI API Sleutel</label>
+                <div class="password-wrapper">
+                    <input type="password" id="assemblyKey" placeholder="Voer je sleutel in...">
+                    <button type="button" class="toggle-password" data-target="assemblyKey"
+                        title="Toon/Verberg sleutel">👁️</button>
+                </div>
+                <p class="help-text">Nog geen sleutel? <a href="https://www.assemblyai.com/" target="_blank">Maak hier
+                        gratis aan</a>.</p>
+            </div>
+            <div class="input-group">
+                <label for="geminiKey">Gemini API Sleutel</label>
+                <div class="password-wrapper">
+                    <input type="password" id="geminiKey" placeholder="Voer je sleutel in...">
+                    <button type="button" class="toggle-password" data-target="geminiKey"
+                        title="Toon/Verberg sleutel">👁️</button>
+                </div>
+                <p class="help-text">Koop of genereer <a href="https://aistudio.google.com/" target="_blank">hier je
+                        Google API key</a>.</p>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>🏢 Bedrijfscontext</h3>
+            <div class="input-group">
+                <label for="contextText">Algemene Context</label>
+                <textarea id="contextText" placeholder="Bijv. Project X bespreking, focus op marketing..."></textarea>
+            </div>
+            <div class="input-group">
+                <label for="namesText">Verwachte Namen</label>
+                <textarea id="namesText" rows="2" placeholder="Jan, Sanne, Jeroen"></textarea>
+                <p class="help-text">Zet hier de verwachte namen, gescheiden door een komma. Deze vullen automatisch je
+                    sprekers-dropdowns in!</p>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>📁 Opslaglocatie</h3>
+            <div class="input-group">
+                <button id="selectDirBtn" class="btn-outline" style="width: 100%; margin-bottom: 8px;">Map
+                    kiezen...</button>
+                <p id="selectedDirPath" class="help-text" style="word-break: break-all; color: var(--accent-light);">Nog
+                    geen map gekozen (gebruikt standaard Downloads)</p>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>📄 Oud Transcript Laden</h3>
+            <div class="input-group">
+                <input type="file" id="transcriptInput" accept=".md" style="display: none;">
+                <button id="loadTranscriptBtn" class="btn-outline" style="width: 100%; margin-bottom: 8px;">Kies .md
+                    bestand...</button>
+                <p id="loadedTranscriptPath" class="help-text"
+                    style="word-break: break-all; color: var(--accent-light);">Geen bestand ingeladen</p>
+            </div>
+            <button id="regenerateBtn" class="btn-primary" style="margin-top: 10px; display: none;">Los notulen
+                genereren</button>
+        </div>
+
+        <div style="padding: 1rem;">
+            <button id="saveSettings" class="btn-primary" style="width: 100%;">Alles Opslaan</button>
+        </div>
+    </aside>
+
+    <!-- Hoofdgedeelte van de applicatie -->
+    <main>
+        <div class="status-bar">
+            <div id="statusDot" class="status-dot"></div>
+            <span id="statusText">Bereid voor op opname...</span>
+        </div>
+
+        <div class="record-container">
+            <button id="recordBtn" class="record-btn">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+                    <path
+                        d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+                </svg>
+            </button>
+            <div id="timer" class="hidden">00:00</div>
+            <h2 id="instructionText">Klik om de opname te starten</h2>
+        </div>
+
+        <!-- Resultaten Sectie -->
+        <div id="results" class="results-container">
+            <!-- Transcript Sectie -->
+            <div class="card">
+                <h2>🗣️ Transcriptie & Sprekers</h2>
+                <div id="transcriptLines">
+                    <!-- Lines worden hier dynamisch toegevoegd -->
+                </div>
+            </div>
+
+            <!-- Notulen Sectie -->
+            <div class="card">
+                <h2>📝 Gegenereerde Notulen</h2>
+                <div id="minutesContent" class="markdown-body">
+                    <!-- Markdown content komt hier -->
+                </div>
+            </div>
+
+            <!-- Export Knoppen -->
+            <div class="actions">
+                <button id="downloadMinutes" class="btn-primary">Download Notulen (.md)</button>
+                <button id="downloadTranscript" class="btn-outline">Download Transcript</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
